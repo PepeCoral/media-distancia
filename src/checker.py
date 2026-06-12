@@ -9,7 +9,7 @@ import requests
 from scraper import RenfeScraper
 
 STATIONS_PATH = Path(__file__).resolve().parent.parent / "assets" / "stations.json"
-MEDIA_DISTANCIA_TYPES = {"MEDIA DISTANCIA", "MEDIA DISTANCIA - MD"}
+MEDIA_DISTANCIA_TYPES = {"MD", "MEDIA DISTANCIA", "REGIONAL", "REGIONAL EXPRÉS"}
 DATE_FORMAT = "%d/%m/%Y"
 
 
@@ -76,10 +76,11 @@ def main():
             price = f"{t['price']}€" if t['price'] else "?"
             lines.append(
                 f"  🕐 {t['departure']}–{t['arrival']}  "
-                f"{t['duration_min']}min  {price}"
+                f"{t['duration_min']}min  {t['train_type']}  {price}"
             )
         body = "\n".join(lines)
 
+    print(body)
     _send_telegram(bot_token, chat_id, body)
 
 
