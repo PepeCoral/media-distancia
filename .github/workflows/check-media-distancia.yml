@@ -1,0 +1,44 @@
+name: Check Media Distancia
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: "Estación de origen"
+        required: false
+        type: string
+      destination:
+        description: "Estación de destino"
+        required: false
+        type: string
+      date:
+        description: "Fecha objetivo (DD/MM/YYYY)"
+        required: false
+        type: string
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+
+      - name: Check Media Distancia availability
+        env:
+          ORIGIN: ${{ inputs.origin || secrets.ORIGIN }}
+          DESTINATION: ${{ inputs.destination || secrets.DESTINATION }}
+          TARGET_DATE: ${{ inputs.date || secrets.TARGET_DATE }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python -m src.checker
